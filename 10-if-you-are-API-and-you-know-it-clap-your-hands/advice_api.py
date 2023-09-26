@@ -31,10 +31,10 @@ def get_advice_by_id(url, data_retriever=get_obj, prompter=input):
     obj = data_retriever(combined_url)
     return obj['slip']['advice'], True
 
-def get_advice_by_keyword(url):
-    keyword = input('Enter your keyword: ')
+def get_advice_by_keyword(url, data_retriever=get_obj, prompter=input):
+    keyword = prompter('Enter your keyword: ')
     keyword_url = url + '/search/' + keyword
-    obj = get_obj(keyword_url)
+    obj = data_retriever(keyword_url)
     if 'message' in obj:
         return obj['message']['text'], True
     else:
