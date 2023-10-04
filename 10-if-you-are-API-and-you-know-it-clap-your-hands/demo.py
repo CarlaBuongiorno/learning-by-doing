@@ -57,7 +57,7 @@ url = "https://meowfacts.herokuapp.com/"
     # https://meowfacts.herokuapp.com/?count=3
 # We could edit the URL ourselves, but Requests has a way to make
 # it easier and less prone to errors:
-arguments = {'count': number_of_facts}
+arguments = {'count': number_of_facts, 'lang': 'esp-mx'}
 r = requests.get(url, params=arguments)
 # Easy as that. Now we convert the response to a Python dictionary...
 obj = r.json()

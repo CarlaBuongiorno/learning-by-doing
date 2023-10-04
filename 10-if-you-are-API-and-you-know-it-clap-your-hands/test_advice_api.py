@@ -1,4 +1,5 @@
-from advice_api import get_random_advice, get_advice_by_id, get_advice_by_keyword
+from advice_api import (get_random_advice, get_advice_by_id,
+                        get_advice_by_keyword, OptionPicker)
 
 def test_get_random_advice():
     url = 'http://great.advice.com'
@@ -33,7 +34,9 @@ def test_get_advice_by_id():
 
 def test_get_advice_by_keyword():
     url = 'http://my.version.com'
-    expected_advice = 'Make your bed.'
+    expected_advice_1 = 'Make your bed.'
+    expected_advice_2 = 'Tidy your bedroom.'
+    expected_advice = f'{expected_advice_1}\n{expected_advice_2}'
     advice_keyword = 'bed'
 
     def fake_input(prompt):
@@ -42,7 +45,7 @@ def test_get_advice_by_keyword():
 
     def fake_get_obj(u):
         assert u == url + '/search/' + advice_keyword
-        return {'slips': [{'advice': expected_advice}] }
+        return {'slips': [{'advice': expected_advice_1}, {'advice': expected_advice_2}] }
     
     advice, continue_running = get_advice_by_keyword(url, fake_get_obj, fake_input)
     assert advice == expected_advice
@@ -51,7 +54,6 @@ def test_get_advice_by_keyword():
 
 def test_get_advice_by_keyword_no_match():
     url = 'http://second.version.com'
-    expected_advice = 'And sleep in it.'
     advice_keyword = 'bed'
     no_match = 'No advice slips found matching that search term.'
 
@@ -66,3 +68,17 @@ def test_get_advice_by_keyword_no_match():
     advice, continue_running = get_advice_by_keyword(url, fake_get_obj, fake_input)
     assert advice == no_match
     assert continue_running
+
+def test_advice_option():
+    url = 'http://my.version.com'
+    expected_advice = 'Make your bed.'
+
+    def bad_function(url):
+        assert False
+
+    def good_function(url):
+        return expected_advice
+
+    test_functions = [bad_function, bad_function, good_function]
+    picker = OptionPicker(test_functions)
+    assert expected_advice == picker.get_advice_by_id(3, url)

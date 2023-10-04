@@ -2,13 +2,22 @@ import requests
 import subprocess
 
 
-url = 'https://coffee.alexflipnote.dev/random.json'
+def get_obj(url):
+    r = requests.get(url)
+    obj = r.json()
+    return obj
 
-r = requests.get(url)
-print(r)
-obj = r.json()
-print(obj)
-print(obj['file'])
-image = obj['file']
 
-subprocess.run(['firefox', image])
+def main(data_retriever=get_obj, outputter=subprocess.run):
+    url = 'https://coffee.alexflipnote.dev/random.json'
+    r = data_retriever(url)
+    image = get_image(r)
+    outputter(['firefox', image])
+
+
+def get_image(obj):
+    return obj['file']
+
+
+if __name__ == '__main__':
+    main()
