@@ -5,12 +5,12 @@ from typing import Any
 def main() -> None:
     url = 'https://bitbucket.detact.fox.local/rest'
     path = '/api/latest/projects/CUSTOMER/repos'
-    headers = {'Authorization': 'Bearer ThisIsNotMyRealBearerToken'}
+    headers = {'Authorization': 'Bearer FakeToken'}
     args = {'start': 0, 'limit': 50}
-    r = requests.get(url+path, headers=headers)
-    customers = get_customer(r.json())
+    obj = get_obj(url+path, args, headers=headers)
+    customers = get_customer(obj)
     customer_paths = get_customer_path(customers)
-    obj_list = get_obj(customer_paths, url, path, args, headers)
+    obj_list = get_obj_list(customer_paths, url, path, args, headers)
     authors = get_author(obj_list)
     name_commits = get_author_dict(authors)
     # while not obj_list['isLastPage']:
@@ -29,8 +29,13 @@ def get_customer(obj: Any) -> list[str]:
     return customers
 
 
-def get_obj(customer_paths: list[str], url: str, path: str, args: dict[str, int], headers: dict[str, str]) -> list[Any]:
-    obj_list = [requests.get(url+path+customer_path, params=args, headers=headers).json() for customer_path in customer_paths]
+def get_obj(url, args, headers):
+    r = requests.get(url, params=args, headers=headers)
+    return r.json()
+
+
+def get_obj_list(customer_paths: list[str], url: str, path: str, args: dict[str, int], headers: dict[str, str], data_retriever=get_obj) -> list[Any]:
+    obj_list = [data_retriever(url+path+customer_path, args, headers) for customer_path in customer_paths]
     obj = [obj for obj in obj_list]
     return obj
 

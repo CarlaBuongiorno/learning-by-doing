@@ -1,5 +1,6 @@
 from bitbucket import (get_author, get_author_dict,
-                       get_customer, get_customer_path)
+                       get_customer, get_customer_path,
+                       get_obj_list)
 from typing import Any
 
 def test_get_author() -> None:
@@ -29,11 +30,18 @@ def test_get_customer_path() -> None:
     customer_paths = get_customer_path(customers)
     assert customer_paths == ['/blue/commits', '/denim/commits']
 
-# def test_get_obj():
-#     expected_url = 'http://bitbucket.com'
-#     path = '/api/CUSTOMER/repos'
-#     args = {'start': 0, 'limit': 2}
-#     headers = {'Authorization': 'Bearer MFqcuiLq5eiGYVwz77vzJj1J'}
-#     customer_paths = ['/blue/commits', '/denim/commits']
-#     obj = get_obj(customer_paths, expected_url, path, args, headers)
+def test_get_obj_list():
+    customer_paths = ['/blue/commits']
+    url = 'http://bitbucket/api'
+    path = '/CUSTOMER/repos'
+    args = {'start': 0}
+    headers = {'Auth': 'myToken'}
 
+    def fake_get_obj(u, a, h):
+        assert a == args
+        assert h == headers
+        assert u == url+path+customer_paths[0]
+        return {'name': 'blue'}
+    
+    obj_list = get_obj_list(customer_paths, url, path, args, headers, fake_get_obj)
+    assert obj_list == [{'name': 'blue'}]
