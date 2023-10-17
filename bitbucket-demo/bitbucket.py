@@ -2,18 +2,16 @@ import requests
 from typing import Any
 
 
-def main() -> None:
+def main(token) -> None:
     url = 'https://bitbucket.detact.fox.local/rest'
-    path = '/api/latest/projects/CUSTOMER/repos'
-    headers = {'Authorization': 'Bearer Mzg3MDY2MDIyNjk4Os8hI4s0K/p8evHOu/frLJ3wHtHi'}
+    get_repos_path = '/api/latest/projects/CUSTOMER/repos'
+    headers = {'Authorization': f'Bearer {token}'}
     args = {'start': 0, 'limit': 50}
-    obj = get_obj(url+path, args, headers=headers)
+    obj = get_obj(url+get_repos_path, args, headers=headers)
+    print(obj)
     customers = get_customers(obj)
     customer_paths = get_customer_path(customers)
-    obj_list = get_obj_list(customer_paths, url, path, args, headers)
-    # print(obj['isLastPage'])
-    # while obj['isLastPage'] == False:
-    #     args['start'] = obj['nextPageStart']
+    obj_list = get_obj_list(customer_paths, url, get_repos_path, args, headers)
     authors = get_author(obj_list)
     name_commits = get_author_dict(authors)
     for name in name_commits:
@@ -54,4 +52,6 @@ def get_author_dict(authors: list[str]) -> dict[str, int]:
 
 
 if __name__ == '__main__':
-    main()
+    import os
+    token = os.environ['SECRET_TOKEN']
+    main(token)

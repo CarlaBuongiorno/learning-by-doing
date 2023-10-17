@@ -1,5 +1,5 @@
 from bitbucket import (get_author, get_author_dict,
-                       get_customer, get_customer_path,
+                       get_customers, get_customer_path,
                        get_obj_list)
 from typing import Any
 
@@ -22,7 +22,7 @@ def test_get_customer() -> None:
     obj = {'values': [ {'forkable': True, 'slug': 'blue'},
                              {'id': 29, 'slug': 'denim'}]}
     expected_customers = ['blue', 'denim']
-    customers = get_customer(obj)
+    customers = get_customers(obj)
     assert customers == expected_customers
 
 def test_get_customer_path() -> None:
