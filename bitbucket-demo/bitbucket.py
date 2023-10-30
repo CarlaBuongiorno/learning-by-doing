@@ -2,7 +2,7 @@ import requests
 from typing import Any
 
 
-def main(token) -> None:
+def main(token: str) -> None:
     url = 'https://bitbucket.detact.fox.local/rest'
     get_repos_path = '/api/latest/projects/CUSTOMER/repos'
     headers = {'Authorization': f'Bearer {token}'}
@@ -25,13 +25,13 @@ def main(token) -> None:
             author_list.extend(authors)
             is_last_page = get_all_pages(obj, args, is_last_page)
             author_dict = get_author_dict(author_list)
-
+            
         print(f'\nFor {customer}:')
         for author, commits in author_dict.items():
             print(f'{author} has made {commits} commits.')
 
 
-def get_obj(url: str, args: dict[str, int], headers: dict[str, str]) -> dict[str, Any]:
+def get_obj(url: str, args: dict[str, int], headers: dict[str, str]) -> Any:
     return requests.get(url, params=args, headers=headers).json()
 
 
@@ -50,7 +50,7 @@ def get_obj_list(customer_paths: list[str], url: str, path: str, args: dict[str,
     return [data_retriever(url+path+customer_path, args, headers) for customer_path in customer_paths]
 
 
-def get_author(obj: list[dict[str, list[Any]]]) -> list[str]:
+def get_author(obj: dict[str, Any]) -> list[str]:
     return [author['author']['name'] for author in obj['values']]
 
 
@@ -61,7 +61,7 @@ def get_author_dict(authors: list[str]) -> dict[str, int]:
     return name_commits
 
 
-def get_all_pages(obj, args, is_last_page):
+def get_all_pages(obj: Any, args: dict[str, int], is_last_page: bool) -> Any:
     if not obj['isLastPage']:
         args['start'] = obj['nextPageStart']
     else:
