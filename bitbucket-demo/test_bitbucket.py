@@ -1,15 +1,21 @@
-from bitbucket import (get_author, get_author_dict,
-                       get_customers, get_customer_path,
-                       get_obj_list)
+from bitbucket import (get_author, get_author_dict, get_customers,
+                       get_customer_path, get_obj_list)
 from typing import Any
 
+# def test_get_author() -> None:
+#     obj_list = [{'values': [{'author': {'name': 'iwan.intgroen', 'id': 133}, 'displayId': '87e9bd0bb60'},
+#                             {'author': {'name': 'pavlos.platanias', 'type': 'NORMAL'}, 'authorTimestamp': 1685616855000}]},
+#                  {'values': [{'author': {'name': 'joris.vandenoever', 'id': 143}, 'displayId': '87e9bd0ba60'},
+#                             {'author': {'name': 'pavlos.platanias', 'type': 'NORMAL'},'authorTimestamp': 1685616855009}]}]
+#     expected_list = ['iwan.intgroen', 'pavlos.platanias', 'joris.vandenoever', 'pavlos.platanias']
+#     authors = get_author(obj_list)
+#     assert authors == expected_list
+
 def test_get_author() -> None:
-    obj_list = [{'values': [{'author': {'name': 'iwan.intgroen', 'id': 133}, 'displayId': '87e9bd0bb60'},
-                            {'author': {'name': 'pavlos.platanias', 'type': 'NORMAL'}, 'authorTimestamp': 1685616855000}]},
-                 {'values': [{'author': {'name': 'joris.vandenoever', 'id': 143}, 'displayId': '87e9bd0ba60'},
-                            {'author': {'name': 'pavlos.platanias', 'type': 'NORMAL'},'authorTimestamp': 1685616855009}]}]
-    expected_list = ['iwan.intgroen', 'pavlos.platanias', 'joris.vandenoever', 'pavlos.platanias']
-    authors = get_author(obj_list)
+    obj = {'values': [{'author': {'name': 'iwan.intgroen', 'id': 133}, 'displayId': '87e9bd0bb60'},
+                      {'author': {'name': 'pavlos.platanias', 'type': 'NORMAL'}, 'authorTimestamp': 1685616855000}]}
+    expected_list = ['iwan.intgroen', 'pavlos.platanias']
+    authors = get_author(obj)
     assert authors == expected_list
 
 def test_get_author_dict() -> None:
@@ -18,19 +24,24 @@ def test_get_author_dict() -> None:
     name_commits = get_author_dict(authors)
     assert name_commits == expected_dict
 
-def test_get_customer() -> None:
-    obj = {'values': [ {'forkable': True, 'slug': 'blue'},
-                             {'id': 29, 'slug': 'denim'}]}
-    expected_customers = ['blue', 'denim']
+# def test_get_customer_path() -> None:
+#     obj = {'values': [ {'forkable': True, 'slug': 'blue'},
+#                        {'id': 29, 'slug': 'denim'}]}
+#     customer_paths = get_customer_path(obj)
+#     assert customer_paths == ['/blue/commits', '/denim/commits']
+
+def test_get_customers() -> None:
+    obj = {'values': [{'forkable': True, 'slug': 'blue'},
+                    {'id': 29, 'slug': 'denim'}]}
     customers = get_customers(obj)
-    assert customers == expected_customers
+    assert customers == ['blue', 'denim']
 
 def test_get_customer_path() -> None:
     customers = ['blue', 'denim']
     customer_paths = get_customer_path(customers)
-    assert customer_paths == ['/blue/commits', '/denim/commits']
+    assert customer_paths == {'blue': '/blue/commits', 'denim': '/denim/commits'}
 
-def test_get_obj_list():
+def test_get_obj_list() -> None:
     customer_paths = ['/blue/commits']
     url = 'http://bitbucket/api'
     path = '/CUSTOMER/repos'
